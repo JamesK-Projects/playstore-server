@@ -18,9 +18,16 @@ app.get('/apps', (req, res) => {
                 .send('Sort must be one of rating or app');
         };
 
-        if('rating'.includes(sort)){
-            console.log('sort by rating')
+        if(sort.includes('rating')){
+            results.sort((a,b) => {
+                return b.Rating - a.Rating
+            })
 
+        }
+        if(sort.includes('app')){
+            results.sort((a,b) => {
+                return a.App > b.App ? 1 : a.App < b.App ? -1 : 0;
+            })
         }
 
         if('app'.includes(sort)){
@@ -29,11 +36,14 @@ app.get('/apps', (req, res) => {
     };
 
     if(genre) {
-        if([!'Action', 'Puzzle', 'Strategy', 'Casual', 'Arcade', 'Card'].includes(genre)) {
+        if(!['Action', 'Puzzle', 'Strategy', 'Casual', 'Arcade', 'Card'].includes(genre)) {
             return res
                 .status(400)
                 .send('Genre must be Action, Puzzle, Strategy, Casual, Arcade, or Card');
         }
+        results = results.filter((result) => {
+            return result.Genres.includes(genre)
+        })
     }
 
     res
